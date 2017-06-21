@@ -1,12 +1,12 @@
 # Site settings
-name: imaicloud文档说明
+name: imaidata博客
 email: 931649248@qq.com
 author: 王洁
 url: https://wangjierj.github.io/wangjierj
 resume_site: https://github.com/imaidata/blog
 github: https://github.com/imaidata/blog
 baseurl: "/blog"
-description: 主要用于imaicloud.com相关文档说明
+description: 主要用于imaidata相关博客
 meta_description: 生命在于折腾
 motto: 生命在于折腾
 banner: Nothing Is Impossible
