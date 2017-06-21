@@ -3,9 +3,9 @@ name: imaicloud文档说明
 email: 931649248@qq.com
 author: 王洁
 url: https://wangjierj.github.io/wangjierj
-resume_site: https://wangjierj.github.io/jekyllTheme/
-github: https://github.com/wangjierj/jekyllTheme
-baseurl: "/jekyllTheme"
+resume_site: https://github.com/imaidata/docs
+github: https://github.com/imaidata/docs
+baseurl: "/docs"
 description: 主要用于imaicloud.com相关文档说明
 meta_description: 生命在于折腾
 motto: 生命在于折腾
