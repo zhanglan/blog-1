@@ -14,12 +14,12 @@ tag: OLAP
 {:toc}
 
 
-#简介
-SAIKU世界上最伟大的开源OLAP 浏览器。它可以分析和展现数据，无论它是否是持久化存储数据。它以多样方式展现你的应用数据，无论是网站数据还是数据仓库数据。SAIKU通过提供一个Schema设计器、交互式的报表引擎、展示板和nosql连接技术，saiku分析平台为你的分析需求提供了一个端到端的完整解决方案。
+# 简介
+SAIKU是世界上最伟大的开源OLAP 浏览器。它可以分析和展现数据，无论它是否是持久化存储数据。它以多样方式展现你的应用数据，无论是网站数据还是数据仓库数据。SAIKU通过提供一个Schema设计器、交互式的报表引擎、展示板和nosql连接技术，saiku分析平台为你的分析需求提供了一个端到端的完整解决方案。
  官网主页：
 http://www.meteorite.bi
 
-#起源
+# 起源
 Saiku成立于2008年，由Tom Barber和Paul Stoellberger研发。
 
 最初叫做Pentaho分析工具，起初是基于OLAP4J库用GWT（google web toolkit）包装的一个前端分析工具。
@@ -35,7 +35,7 @@ Saiku成立于2008年，由Tom Barber和Paul Stoellberger研发。
 
 3.saiku 本地化使用的是js来处理的
  
-#特点
+# 特点
 1、 轻量级的OLAP分析引擎，可以方便的扩展、嵌入和配置。
 2、通过REST API连接OLAP系统，利用其友好的界面为用户提供直观的分析数据的方式。
 3/ 界面使用HTML、CSS和Javascript实现，从而使得它非常容易自定义。
@@ -43,9 +43,9 @@ Saiku成立于2008年，由Tom Barber和Paul Stoellberger研发。
 　　唯一的要求是第三方应用程序可以发送和接受HTTP通信和接收JSON格式的数据。
 　　客户端程序不需要了解MDX和相关的查询语言。
 
-#安装构建
+# 安装构建
 
-##安装jdk
+## 安装jdk
 1、将jdk8的安装文件下载至/usr目录下
 cd /usr
 wget --no-check-certificate --no-cookies  http://10.10.10.67/eclipse/jdk8/jdk-8u131-linux-x64.tar.gz
@@ -66,7 +66,7 @@ source /etc/profile
 
 5、查看jdk是否安装成功；
 java -version
-##安装maven
+## 安装maven
 1、将maven的安装文件下载至/usr目录下
 cd /usr
 wget --no-check-certificate --no-cookies  http://10.10.10.67/eclipse/jdk8/apache-maven-3.5.0-bin.tar.gz
@@ -87,7 +87,7 @@ source /etc/profile
 5、查看maven是否安装成功；
 mvn --version
 
-##maven构建
+## maven构建
 mvn clean install -DskipTests
 mvn clean clover2:setup test clover2:aggregate clover2:clover
 以上maven构建方式，由于无法连接到国外的源，所以未能构建成功。
@@ -103,13 +103,13 @@ mvn clean clover2:setup test clover2:aggregate clover2:clover
 >    </mirror>
 >  </mirrors>
 
-##下载社区版
+## 下载社区版
 通过以下url下载安装jar包：
 http://www.meteorite.bi/products/saiku/download
 
 解压缩saiku-latest.zip
 
-##启动
+## 启动
 cd /apps/saiku-server/
 ./start-saiku.sh
 
