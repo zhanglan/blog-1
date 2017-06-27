@@ -78,214 +78,60 @@ $ kinit -k -t webb.keytab webb
 ```
 webb.keytab需要位于当前目录，或者用绝对路径。由于一个keytab文件中可以包含多个主体，所以后面要跟上主体id(webb)。  
 
-### 未启用kerberos的HDFS
-未启用kerberos时HDFS是没有认证和权限控制的：
+### 通过命令行访问启用了kerberos的集群
+通过命令行访问启用了kerberos的集群（kerberized cluster），必须首先用kinit登录。
 ```
-$ curl http://u1401.ambari.apache.org:50070/webhdfs/v1/user?op=LISTSTATUS
-{"FileStatuses":{"FileStatus":[
-{"accessTime":0,"blockSize":0,"childrenNum":6,"fileId":16388,"group":"hdfs","length":0,"modificationTime":1493881416749,"owner":"ambari-qa","pathSuffix":"ambari-qa","permission":"770","replication":0,"storagePolicy":0,"type":"DIRECTORY"},
-{"accessTime":0,"blockSize":0,"childrenNum":0,"fileId":16444,"group":"hdfs","length":0,"modificationTime":1493278869398,"owner":"hcat","pathSuffix":"hcat","permission":"755","replication":0,"storagePolicy":0,"type":"DIRECTORY"},
-{"accessTime":0,"blockSize":0,"childrenNum":0,"fileId":16455,"group":"hdfs","length":0,"modificationTime":1493278917798,"owner":"hive","pathSuffix":"hive","permission":"755","replication":0,"storagePolicy":0,"type":"DIRECTORY"}
-]}}
+$ kdestroy                  (登出)
+$ hdfs dfs -ls /tmp
+(省略一些java堆栈报错信息)
+ls: Failed on local exception: java.io.IOException: javax.security.sasl.SaslException: GSS initiate failed [Caused by GSSException: No valid credentials provided (Mechanism level: Failed to find any Kerberos tgt)]; Host Details : local host is: "u1403.ambari.apache.org/192.168.14.103"; destination host is: "u1401.ambari.apache.org":8020;
 ```
-而通过浏览器访问：```http://u1401.ambari.apache.org:50070/explorer.html#/user```  
-发现浏览器也是调用```/webhdfs/v1/user?op=LISTSTATUS```这个API。  
-使用命令行访问HDFS:
+GSS是Generic Security Services的缩写。hdfs向kerbers进程(通过GSS协议)请求TGT票据，kerberos说没有有效凭据。  
 ```
-$ hdfs dfs -ls /user
-Found 3 items
-drwxrwx---   - ambari-qa hdfs          0 2017-05-04 07:03 /user/ambari-qa
-drwxr-xr-x   - hcat      hdfs          0 2017-04-27 07:41 /user/hcat
-drwxr-xr-x   - hive      hdfs          0 2017-04-27 07:41 /user/hive
-```
-### 启用了kerberos的HDFS
-```
-$ curl http://u1401.ambari.apache.org:50070/webhdfs/v1/user?op=LISTSTATUS
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
-<title>Error 401 Authentication required</title>
-</head>
-<body><h2>HTTP ERROR 401</h2>
-<p>Problem accessing /webhdfs/v1/user. Reason:
-<pre>    Authentication required</pre></p><hr /><i><small>Powered by Jetty://</small></i><br/>   
-```
-提示“需要认证”了。   
-使用命令行访问启用了kerberos的HDFS:
-```
-$ hdfs dfs -ls /user
-17/05/04 08:47:03 WARN ipc.Client: Exception encountered while connecting to the server :
-...  (省略)
-ls: Failed on local exception: java.io.IOException: javax.security.sasl.SaslException: GSS initiate failed [Caused by GSSException: No valid credentials provided (Mechanism level: Failed to find any Kerberos tgt)]; Host Details : local host is: "u1401.ambari.apache.org/192.168.14.101"; destination host is: "u1401.ambari.apache.org":8020;
-```
-提示没有提供有效的凭据。  
-
-### kerberos的HDFS授权
-
-在KDC上创建两个测试用的用户webb和webb2：
-```
-$ kadmin.local -q "addprinc webb"                          (添加主体webb)
-Enter password for principal "webb@AMBARI.APACHE.ORG":     (输入两次密码)
-$ kadmin.local -q "addprinc webb2"                          (添加主体webb2)
-Enter password for principal "webb@AMBARI.APACHE.ORG":     (输入两次密码)
-```
-下面分别用webb和webb2登录，并创建目录：
-```
-$ kinit webb                                   (登录使用kerberos客户端的kinit命令)
-Password for webb3@AMBARI.APACHE.ORG:          (输入主体webb的密码)
-$ klist                                        (klist显示当前登录的用户是webb)
-Default principal: webb@AMBARI.APACHE.ORG
-Valid starting       Expires              Service principal
-05/05/2017 00:43:28  05/05/2017 10:43:28  krbtgt/AMBARI.APACHE.ORG@AMBARI.APACHE.ORG
-        renew until 05/12/2017 00:43:25
-$ hdfs dfs -mkdir /tmp/webb                    (用webb用户在HDFS上创建/tmp/webb目录)
-$ kinit webb2                                  (切换为webb2登录，会提示输入密码)
-$ hdfs dfs -mkdir /tmp/webb2                   (用webb2用户在HDFS上创建/tmp/webb2目录)
-$ hdfs dfs -ls /tmp                            (显示HDFS中/tmp目录下的内容)
-Found 17 items
-...(省略)
-drwxr-xr-x   - webb      hdfs          0 2017-05-04 11:33 /tmp/webb
-drwxr-xr-x   - webb2     hdfs          0 2017-05-04 11:36 /tmp/webb2
-```
-通过上面的文件列表可以看到新创建的两个目录的拥有者(owner)分别是webb和webb2。  
-HDFS采用与POSIX兼容的文件系统通用的授权方案。权限由三个不同类别的用户管理：拥有者，组和其他人。读取，写入和执行权限可以独立授予每个类。  
-（当前用户是webb2）修改一下/tmp/webb2的文件权限：
-```
-$ hdfs dfs -chmod 700 /tmp/webb2          (只有文件拥有者可以改权限)
+$ kinit webb
 $ hdfs dfs -ls /tmp
 Found 17 items
-...(省略)
+...(省略一些)
 drwxr-xr-x   - webb      hdfs          0 2017-05-04 11:33 /tmp/webb
 drwx------   - webb2     hdfs          0 2017-05-04 11:36 /tmp/webb2
 ```
-当修改成700权限后，只有文件拥有者可以修改和查看，其他用户都没有了权限。可以切换成webb用户测试一下：
-```
-$ kinit webb                        (输入密码)
-$ hdfs dfs -ls /tmp/webb2
-...(略)
-ls: Permission denied: user=webb, access=READ_EXECUTE, inode="/tmp/webb2":webb2:hdfs:drwx------
-```
-如果每个租户的HDFS目录权限都默认设定为700，则只有租户自己可以查看和存取目录下的文件。  
 
-## kerberos命令备忘
-#### 主体
-在KDC中新增主体：
+### 通过REST API访问启用了kerberos的集群
 ```
-$ kadmin.local
-kadmin.local:  addprinc webb
-WARNING: no policy specified for webb@AMBARI.APACHE.ORG; defaulting to no policy
-Enter password for principal "webb@AMBARI.APACHE.ORG":
-Re-enter password for principal "webb@AMBARI.APACHE.ORG":
-Principal "webb@AMBARI.APACHE.ORG" created.
+$ curl --version
+Features:  GSS-Negotiate (其它特性略)
+$ curl -v -i --negotiate -u : http://u1401.ambari.apache.org:50070/webhdfs/v1/tmp/webb?op=LISTSTATUS
+> GET /webhdfs/v1/tmp/webb?op=LISTSTATUS HTTP/1.1
+< HTTP/1.1 401 Authentication required
+< WWW-Authenticate: Negotiate
+< Set-Cookie: hadoop.auth=; Path=/; HttpOnly
+* Server auth using GSS-Negotiate with user ''
+> GET /webhdfs/v1/tmp/webb?op=LISTSTATUS HTTP/1.1
+> Authorization: Negotiate YIICgAYJKoZIhvcSAQICAQBuggJvMIICa6ADAgEFoQMCAQ6iBwMFACAAAACjggF+YYIBejCCAXagAwIBBaETGxFBTUJBUkkuQVBBQ0hFLk9SR6IqMCigAwIBA6EhMB8bBEhUVFAbF3UxNDAxLmFtYmFyaS5hcGFjaGUub3Jno4IBLDCCASigAwIBEqEDAgEBooIBGgSCARbj+QAnGHQabWxjkiDMUBF+7xxVJMPFPupO+52yR1UNtkGn96CGaYQLuNeCuY8hG99fi3GjFex1QAEoOJxpWeVCHflprJj14vR/mIVNmcgUEv5qjAw8osZCqdM4bmMQk/zwR1En38AFTza5nP/nUG5iblNYIzE5NCufUCK6XO8CPR1FxtPTcgMm5XucWTjsLpLCf3K15xjDkWoEhPRSkhZ0hOnuNJh+/99Bk+b158KytTrgCXazqWxQZ/9VRM1e5Q6eF56Xer6EMpFiNQg2esrA0AcUCYxfFdWu/I7lDClfVNldD9YARYR15J0qOW2ahLBQLeyRdayX3f88uA5Cgqerb1qlVqNHIOCEk+VXktUREvjels38RaSB0zCB0KADAgESooHIBIHFLOg8rw9hK23hGcOUilryj1kHw4jn3zh39kUFVqSRXywCis7wzeJZPEh0XOyV7C3Hb6ZDD8sFN3BeGY3RpSA4UAoGHMZHsidRKMGblblknfXX74XjsAVmBMXq9BPnYL9GmuqW5HEBB97QArorcFWJbUA5Hwyzh2R6sfSMxi0q7M+QGE4yEdg5rrzBFSNeQF6a20sRyAzEj3lYqVcq1PSnlVCKoYlpf3bkFtdmE3tvd7fvEdRP237v1xDiaQRN6r2fs5cvPeI=
+< HTTP/1.1 200 OK
+< WWW-Authenticate: Negotiate YGoGCSqGSIb3EgECAgIAb1swWaADAgEFoQMCAQ+iTTBLoAMCARKiRARCmg3tGs/VORtw83iOQbGGE/ctFEWAorVtPkgEOv+++fRX76t23FNYNU+JnSJoxJNQDS+BaXvsax4NkeIdFhp4JYcN
+< Set-Cookie: hadoop.auth="u=webb&p=webb@AMBARI.APACHE.ORG&t=kerberos&e=1498565926445&s=xJ6CE/K7I6iblHPTZoka5zlvbPg="; Path=/; HttpOnly
+<
+{"FileStatuses":{"FileStatus":[
+{"accessTime":1493947036270,"blockSize":134217728,"childrenNum":0,"fileId":22980,"group":"hdfs","length":3,"modificationTime":1493947036592,"owner":"webb","pathSuffix":"t1.txt","permission":"644","replication":3,"storagePolicy":0,"type":"FILE"}
+]}}
 ```
-或者：
-```
-$ kadmin.local -q "addprinc hue/u1401.ambari.apache.org@AMBARI.APACHE.ORG"
-```
-#### keytab
-为主体webb@AMBARI.APACHE.ORG生成keytab文件，文件名是webb.keytab（当前目录下生成）
-```
-$ kadmin.local
-kadmin.local:  ktadd -k webb.keytab webb@AMBARI.APACHE.ORG
-Entry for principal webb@AMBARI.APACHE.ORG with kvno 3, encryption type aes256-cts-hmac-sha1-96 added to keytab WRFILE:webb.keytab.
-Entry for principal webb@AMBARI.APACHE.ORG with kvno 3, encryption type arcfour-hmac added to keytab WRFILE:webb.keytab.
-Entry for principal webb@AMBARI.APACHE.ORG with kvno 3, encryption type des3-cbc-sha1 added to keytab WRFILE:webb.keytab.
-Entry for principal webb@AMBARI.APACHE.ORG with kvno 3, encryption type des-cbc-crc added to keytab WRFILE:webb.keytab.
-kadmin.local:  exit
-```
-使用keytab文件登录（而不是密码）：
-```
-$ kinit -k -t webb.keytab webb
-```
-显示keytab文件中主体和加密类型：
-```
-$ klist -e -k webb.keytab 
-Keytab name: FILE:webb.keytab
-KVNO Principal
----- --------------------------------------------------------------------------
-   2 webb@AMBARI.APACHE.ORG (aes256-cts-hmac-sha1-96)
-   2 webb@AMBARI.APACHE.ORG (arcfour-hmac)
-   2 webb@AMBARI.APACHE.ORG (des3-cbc-sha1)
-   2 webb@AMBARI.APACHE.ORG (des-cbc-crc)
-   3 webb@AMBARI.APACHE.ORG (aes256-cts-hmac-sha1-96)
-   3 webb@AMBARI.APACHE.ORG (arcfour-hmac)
-   3 webb@AMBARI.APACHE.ORG (des3-cbc-sha1)
-   3 webb@AMBARI.APACHE.ORG (des-cbc-crc)
-```
-以上是安装了启用了kerberos的AMBARI下的keytab。而仅安装kerberos后测试的结果是：
-```
-$  klist -e -k webb.keytab
-Keytab name: FILE:webb.keytab
-KVNO Principal
----- --------------------------------------------------------------------------
-   2 webb@AMBARI.APACHE.ORG (aes256-cts-hmac-sha1-96)
-   2 webb@AMBARI.APACHE.ORG (arcfour-hmac)
-   2 webb@AMBARI.APACHE.ORG (des3-cbc-sha1)
-   2 webb@AMBARI.APACHE.ORG (des-cbc-crc)
-```
+通过curl --version命令可以看到curl内置了GSS-Negotiate(通过GSS进行协商认证)，用--negotiate参数可以告诉curl使用Negotiate认证，后面的-u和冒号参数是配套和必须的。-v和-i参数是为了看清楚整个交互过程。大于号`>`表示发出信息，小于号`<`表示收到的信息。  
+curl实际发出了两次请求。第一次的响应码是401，响应头中放置了`WWW-Authenticate: Negotiate`，代表服务器想使用协商认证（集群启用kerberos的结果），Set-Cookie使相关值变成空串`""`。  
+curl发现了响应头的`GSS-Negotiate`，并且还有`--negotiate`参数，它就kerberos进取通过GSS协议请求票据。请求成功后发送了第二次请求，第二次请求头中的`Authorization: Negotiate`后面的应为票据信息。服务器验证票据通过后，发回了状态码200的响应。响应头中`WWW-Authenticate: Negotiate`的作用不清楚。  
+最后是json格式的HDFS中`/tmp/webb`目录下的内容（有个叫t1.txt的文件）。
 
-### Kerberos认证测试
-用kinit登录kerberos，然后使用CURL访问REST API，需要在CURL命令行上增加```--negotiate -u : ```参数。例如：
-```
-$ klist -e -k /etc/security/keytabs/hdfs.headless.keytab
-Keytab name: FILE:/etc/security/keytabs/hdfs.headless.keytab
-KVNO Principal
----- --------------------------------------------------------------------------
-   1 hdfs-hdp1@AMBARI.APACHE.ORG (aes256-cts-hmac-sha1-96)
-   1 hdfs-hdp1@AMBARI.APACHE.ORG (des-cbc-md5)
-   1 hdfs-hdp1@AMBARI.APACHE.ORG (aes128-cts-hmac-sha1-96)
-   1 hdfs-hdp1@AMBARI.APACHE.ORG (des3-cbc-sha1)
-   1 hdfs-hdp1@AMBARI.APACHE.ORG (arcfour-hmac)
-$ kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-hdp1@AMBARI.APACHE.ORG
-$ curl -k -i --negotiate -u : http://u1401.ambari.apache.org:50070/webhdfs/v1/tmp?op=LISTSTATUS
-```
+### 通过浏览器访问启用了kerberos的集群
 
-### kerberos代理测试
-[参考](https://pypi.python.org/pypi/kdcproxy/0.3.1)  
-freeipa带有kerberos KDC代理功能。执行ipa-server-install的时候有提示：
-```
-Configuring the web interface (httpd). Estimated time: 1 minute
-  [16/21]: create KDC proxy user
-  [17/21]: create KDC proxy config
-  [18/21]: enable KDC proxy
-```
-通过KdcProxy可以让kinit客户端以https协议通过代理连接到KDC。  
-首先需要把freeipa的证书复制到客户端所在的机器上：
-```
-$ cd /etc/ipa
-$ openssl X509 -in ca.crt -out ca.pem
-$ scp ca.pem root@c7002:/etc/ssl/.    (复制到c7002节点)
-```
-配置c7002节点的kerberos客户端配置文件(/etc/krb5.conf)：
-```
- [libdefaults]
-   default_realm = AMBARI.APACHE.ORG
+当前的hadoop界面(UI)的实现基本上都是html+ajax(REST)，原理上与前面讲的curl发出REST请求基本是一样的。  
+当浏览器收到401返回码和响应头的`WWW-Authenticate: Negotiate`信息后，它会与本地的kerberos进程进行交互，获取票据。从安全性的考虑，浏览器不能收到`WWW-Authenticate: Negotiate`响应头就发送票据给对方，一般要手工设置“可信任域”。不同的浏览器设置方式不同。本文使用火狐浏览器进行测试。  
+不同的操作系统下，情况也会不同。现在流行的桌面操作系统有：  
+- linux桌面  
+- MAC OS  
+- windows  
+linux桌面下的测试比较简单；MAC OS没找到办法；windows下的测试下面有专门的一章。  
 
-[realms]
-   AMBARI.APACHE.ORG = {
-     http_anchors = FILE:/etc/ssl/ca.pem
-     kdc = https://c7004.ambari.apache.org/KdcProxy
-     kpasswd_server = https://c7004.mbari.apache.org/KdcProxy
-```
-在c7002节点上测试KDC代理。环境变量KRBT_TRACE可以让kerberos调试信息输出到文件(/dev/stdout表示输出到屏幕)：
-```
-$ env KRB5_TRACE=/dev/stdout kinit admin
-[29875] 1497331322.495260: Getting initial credentials for admin@AMBARI.APACHE.ORG
-[29875] 1497331322.495434: Sending request (196 bytes) to AMBARI.APACHE.ORG
-[29875] 1497331322.495463: Resolving hostname c7004.ambari.apache.org
-[29875] 1497331322.619668: TLS certificate name matched "c7004.ambari.apache.org"
-[29875] 1497331322.623893: Sending HTTPS request to https 192.168.70.104:443
-[29875] 1497331322.629792: Received answer (272 bytes) from https 192.168.70.104:443
-[29875] 1497331322.629809: Terminating TCP connection to https 192.168.70.104:443
-[29875] 1497331322.630005: Response was not from master KDC
-[29875] 1497331322.630206: Received error from KDC: -1765328359/Additional pre-authentication required
-[29875] 1497331322.630269: Processing preauth types: 136, 19, 2, 133
-[29875] 1497331322.630288: Selected etype info: etype aes256-cts, salt "Ar>LhD/*\>smo3/3", params ""
-[29875] 1497331322.630296: Received cookie: MIT
-Password for admin@AMBARI.APACHE.ORG:
-（略）
-```
-从上面的调试信息可以看出kinit连接是通过https的443端口连接到KDC的。  
+ubuntu桌面系统自带的浏览器就是火狐。首先要配置“可信任域”。在火狐地址栏输入：about:config并回车。然后在search输入框中输入"negotiate"，双击配置项network.negotiate-auth.trusted-uris，输入```.ambari.apache.org```(注意别忽略最前面的点)。  
 ## windows下kerberos认证(非AD)
 [原文](https://community.hortonworks.com/articles/28537/user-authentication-from-windows-workstation-to-hd.html)  
 在windows10专业版下进行的测试，win10已经加入了AD域。  
