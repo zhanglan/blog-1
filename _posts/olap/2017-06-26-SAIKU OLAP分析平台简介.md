@@ -122,24 +122,23 @@ http://www.meteorite.bi/products/saiku/download
 `cd /apps/saiku-server/  
 ./start-saiku.sh`  
   
-使用说明：  
-http://192.168.10.114:8080/  
-admin  
-admin  
+## 使用说明：  
+	开发机登录地址如下：
+	http://192.168.10.114:8080/  
+	用户名：admin
+	密码：admin  
   
-1、新建查询：18步  
+### 1、新建查询，一共有18步操作步骤，现示例关键的几步：  
   
-##配置说明  
+####  选择Admin Console  
   
-选择Admin Console  
+![](saiku1.png)
   
+####  上传schma  
   
+![](saiku2.png)  
   
-上传schma  
-  
-  
-  
-内容先手动构建  
+以下为Schema内容  
 ```  
 <Schema name="test_schema">  
 	<cube name="test_cube">  
@@ -155,9 +154,9 @@ admin
 ```  
 提示上传成功  
   
+![](saiku3.png)  
   
-  
-在mysql中建表，然后添加数据源  
+#### 在mysql中建表，然后添加数据源  
 ```
 CREATE TABLE t_data  
 (  
@@ -194,15 +193,13 @@ CREATE TABLE t_user
   
 数据源配置，根据自己的连接情况进行相应的配置：  
   
-  
+![](saiku4.png)    
   
 重新启动服务，然后选择多维数据查看，通过简单的配置，就可以得到此立方体下的各种维度的query和图表。  
   
+![](saiku5.png)   
   
-  
-  
-  
-Saiku去掉登录模块  
+## Saiku去掉登录模块  
 
 1、修改applicationContext-saiku-webapp.xml  
 ```
