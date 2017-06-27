@@ -58,9 +58,9 @@ wget --no-check-certificate --no-cookies  http://10.10.10.67/eclipse/jdk8/jdk-8u
 `vim  /etc/profile`  
 在文件中增加以下信息：  
 `export JAVA_HOME=/usr/jdk1.8.0_131  
-export JRE_HOME=${JAVA_HOME}/jre    
-export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib    
-export PATH=${JAVA_HOME}/bin:$PATH  `  
+export JRE_HOME=${JAVA_HOME}/jre
+export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib   
+export PATH=${JAVA_HOME}/bin:$PATH`  
   
 4、使上述配置立即生效  
 `source /etc/profile`  
@@ -69,7 +69,7 @@ export PATH=${JAVA_HOME}/bin:$PATH  `
 `java -version`  
 ## 安装maven  
 1、将maven的安装文件下载至/usr目录下  
-`cd /usr`  
+`cd /usr`   
 `wget --no-check-certificate --no-cookies  http://10.10.10.67/eclipse/jdk8/apache-maven-3.5.0-bin.tar.gz`  
   
 2、解压缩maven安装文件；  
@@ -94,15 +94,15 @@ mvn clean clover2:setup test clover2:aggregate clover2:clover`
 以上maven构建方式，由于无法连接到国外的源，所以未能构建成功。  
 添加阿里云镜象：  
 修改maven根目录下的conf文件夹中的setting.xml文件，内容如下：  
-`  
-  <mirrors>  
-    <mirror>  
-      <id>alimaven</id>  
-      <name>aliyun maven</name>  
+ 
+`  <mirrors>  
+    <mirror>   
+      <id>alimaven</id>   
+      <name>aliyun maven</name>   
       <url>http://maven.aliyun.com/nexus/content/groups/public/</url>  
-      <mirrorOf>central</mirrorOf>          
+      <mirrorOf>central</mirrorOf>  
     </mirror>  
-  </mirrors>`  
+   </mirrors>`  
   
 ## 下载社区版  
 通过以下url下载安装jar包：  
@@ -133,14 +133,23 @@ admin
   
 内容先手动构建  
   
-><Schema name="test_schema"><cube name="test_cube"><Table name="t_data"/><Dimension name="user" foreignKey="user_id"><Hierarchy hasAll="true" allMemberName="user_id" primaryKey="user_id"><Table name="t_user"/><Level name="user_id" column="user_id" uniqueMembers="true" type="Integer"/></Hierarchy></Dimension><Measure column="count" aggregator="sum" datatype="Numeric" name="all_count" caption="all_count"/></cube></Schema>  
+`<Schema name="test_schema">  
+	<cube name="test_cube">  
+		<Table name="t_data"/>  
+			<Dimension name="user" foreignKey="user_id">  
+				<Hierarchy hasAll="true" allMemberName="user_id" primaryKey="user_id"><Table name="t_user"/>  
+					<Level name="user_id" column="user_id" uniqueMembers="true" type="Integer"/>  
+				</Hierarchy>  
+			</Dimension>  
+			<Measure column="count" aggregator="sum" datatype="Numeric" name="all_count" caption="all_count"/>  
+	</cube>  
+</Schema>`  
 提示上传成功  
   
   
   
 在mysql中建表，然后添加数据源  
-`  
-CREATE TABLE t_data  
+`CREATE TABLE t_data  
 (  
   user_id integer,  
   count numeric(4,2)  
@@ -150,9 +159,11 @@ CREATE TABLE t_user
   user_id serial NOT NULL,  
   user_name character varying(50),  
   pwd character varying(50)  
-);`  
+);`   
+
+ 
 --t_data的数据  
-|  user_id         |  count          |    
+|  user_id         |  count          |      
 |  :------------- | :-------------:|     
 |  1     	          |  33               |   
 |  2     	          |  32               |   
