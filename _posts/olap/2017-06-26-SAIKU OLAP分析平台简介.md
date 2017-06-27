@@ -47,61 +47,62 @@ Saiku成立于2008年，由Tom Barber和Paul Stoellberger研发。
 
 ## 安装jdk
 1、将jdk8的安装文件下载至/usr目录下
-cd /usr
-wget --no-check-certificate --no-cookies  http://10.10.10.67/eclipse/jdk8/jdk-8u131-linux-x64.tar.gz
+`cd /usr
+wget --no-check-certificate --no-cookies  http://10.10.10.67/eclipse/jdk8/jdk-8u131-linux-x64.tar.gz`
 
 2、解压缩jdk8安装文件；
-tar -zxvf  jdk-8u131-linux-x64.tar.gz
+`tar -zxvf  jdk-8u131-linux-x64.tar.gz`
 
-3、修改/etc/profile,
-vim  /etc/profile
-增加以下信息
-export JAVA_HOME=/usr/jdk1.8.0_131
+3、修改/etc/profile
+使用以下命令：
+`vim  /etc/profile`
+在文件中增加以下信息：
+`export JAVA_HOME=/usr/jdk1.8.0_131
 export JRE_HOME=${JAVA_HOME}/jre  
 export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib  
-export PATH=${JAVA_HOME}/bin:$PATH  
+export PATH=${JAVA_HOME}/bin:$PATH  `
 
 4、使上述配置立即生效
-source /etc/profile
+`source /etc/profile`
 
 5、查看jdk是否安装成功；
-java -version
+`java -version`
 ## 安装maven
 1、将maven的安装文件下载至/usr目录下
-cd /usr
-wget --no-check-certificate --no-cookies  http://10.10.10.67/eclipse/jdk8/apache-maven-3.5.0-bin.tar.gz
+`cd /usr`
+`wget --no-check-certificate --no-cookies  http://10.10.10.67/eclipse/jdk8/apache-maven-3.5.0-bin.tar.gz`
 
 2、解压缩maven安装文件；
-tar -zxvf  apache-maven-3.5.0-bin.tar.gz
+`tar -zxvf  apache-maven-3.5.0-bin.tar.gz`
 
 3、修改/etc/profile,
-vim /etc/profile
+`vim /etc/profile`
 增加以下信息
 
-export M2_HOME=/usr/apache-maven-3.5.0 
-export PATH=${M2_HOME}/bin:$PATH
+`export M2_HOME=/usr/apache-maven-3.5.0 
+export PATH=${M2_HOME}/bin:$PATH`
 
 4、使上述配置立即生效
-source /etc/profile
+`source /etc/profile`
 
 5、查看maven是否安装成功；
-mvn --version
+`mvn --version`
 
 ## maven构建
-mvn clean install -DskipTests
-mvn clean clover2:setup test clover2:aggregate clover2:clover
+`mvn clean install -DskipTests
+mvn clean clover2:setup test clover2:aggregate clover2:clover`
 以上maven构建方式，由于无法连接到国外的源，所以未能构建成功。
 添加阿里云镜象：
 修改maven根目录下的conf文件夹中的setting.xml文件，内容如下：
-
->  <mirrors>
->    <mirror>
->      <id>alimaven</id>
->      <name>aliyun maven</name>
->      <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
->      <mirrorOf>central</mirrorOf>        
->    </mirror>
->  </mirrors>
+`
+  <mirrors>
+    <mirror>
+      <id>alimaven</id>
+      <name>aliyun maven</name>
+      <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+      <mirrorOf>central</mirrorOf>        
+    </mirror>
+  </mirrors>`
 
 ## 下载社区版
 通过以下url下载安装jar包：
@@ -110,8 +111,8 @@ http://www.meteorite.bi/products/saiku/download
 解压缩saiku-latest.zip
 
 ## 启动
-cd /apps/saiku-server/
-./start-saiku.sh
+`cd /apps/saiku-server/
+./start-saiku.sh`
 
 使用说明：
 http://192.168.10.114:8080/
@@ -138,30 +139,35 @@ admin
 
 
 在mysql中建表，然后添加数据源
-
->CREATE TABLE t_data
->(
->  user_id integer,
->  count numeric(4,2)
->);
->CREATE TABLE t_user
->(
->  user_id serial NOT NULL,
->  user_name character varying(50),
->  pwd character varying(50)
->);
+`
+CREATE TABLE t_data
+(
+  user_id integer,
+  count numeric(4,2)
+);
+CREATE TABLE t_user
+(
+  user_id serial NOT NULL,
+  user_name character varying(50),
+  pwd character varying(50)
+);`
 --t_data的数据
-* 1;33.00
-* 2;32.00
-* 3;34.00
-* 4;38.00
-* 2;23.00
-* 2;3.00
+| user_id       | count         | 
+| ------------- |:-------------:|  
+| 1     	    | 33 			|
+| 2     	    | 32 			|
+| 3     	    | 34 			|
+| 4     	    | 38 			|
+
 --t_user的数据
-* 1;"user1";"1"
-* 2;"user2";"2"
-* 3;"user3";"3"
-* 4;"user4";"4"
+| user_id       | user_name     | pwd           | 
+| ------------- |:-------------:|:-------------:|  
+| 1     	    | user1			|1              |
+| 2     	    | user2			|2              |
+| 3     	    | user3			|3              |
+| 4     	    | user4			|4              |
+
+
 数据源配置，根据自己的连接情况进行相应的配置：
 
 
