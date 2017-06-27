@@ -58,8 +58,11 @@ wget --no-check-certificate --no-cookies  http://10.10.10.67/eclipse/jdk8/jdk-8u
 `vim  /etc/profile`  
 在文件中增加以下信息：  
 `export JAVA_HOME=/usr/jdk1.8.0_131  
+
 export JRE_HOME=${JAVA_HOME}/jre
-export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib   
+
+export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib
+   
 export PATH=${JAVA_HOME}/bin:$PATH`  
   
 4、使上述配置立即生效  
