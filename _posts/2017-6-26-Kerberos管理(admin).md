@@ -3,7 +3,8 @@ layout: post
 title:  Kerberos管理
 date:   2017-06-26
 categories: security
-tag: security kerberos
+tag: security,kerberos
+permalink: /kerberos_admin/
 ---
 ## Kerberos服务器安装/管理
 参考: [HDP Security](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.0/bk_security/content/_kerberos_overview.html)、[一个kerberos入门](https://steveloughran.gitbooks.io/kerberos_and_hadoop/content/)。
