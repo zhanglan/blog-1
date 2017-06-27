@@ -51,6 +51,7 @@ admin/admin@AMBARI.APACHE.ORG
 (略)
 ```
 ### 4. 新增主体
+可以把主体简单理解为用户，只是它的id构成有自己的规则。（我的主体是wbwang@HOME.LANGCHAO.COM）  
 以交互方式增加主体：
 ```
 $ kadmin.local
@@ -109,16 +110,31 @@ KVNO Principal
    2 webb@AMBARI.APACHE.ORG (des-cbc-crc)
 ```
 
+## 集群通过Ambari启用kerberos
+通过Abmari部署的hadoop集群默认是不启用kerberos的，可以通过Ambari -> Admin -> Kerberos 菜单来启用或禁止kerberos。  
+上文中提到了如何部署KDC，在启用kerberos前应先部署好KDC，并通过简单测试。  
+在启用kerberos的向导中，应选择“Existing MIT KDC”（已经存在的MIT KDC）。然后需要输入的关键字段有：  
+- KDC hosts: `u1404.ambari.apache.org`  
+- realm: `AMBARI.APACHE.ORG`  
+- Kadmin host: `u1404.ambari.apache.org`  
+- Admin principal: `root/admin@AMBARI.APACHE.ORG`  
+向导在“Install and Test Kerberos Client”这步会自动安装kerberos client。  
+(很容易碰到网络的问题导致client安装失败。最容易的解决办法是通过手机热点上网，执行`apt update`或`yum update`。然后重试)   
+
+当集群启用了kerberos后，可以到`/etc/security/keytabs`目录下查看，发现会多了一些keytab文件。这一般是本节点上运行服务的密钥。服务通过这些密钥登录KDC，获取凭据(TGT)后才能调用其它服务，如存取HDFS。  
+
 ## kerberos代理
-[参考](https://pypi.python.org/pypi/kdcproxy/0.3.1)  
-freeipa带有kerberos KDC代理功能。执行ipa-server-install的时候有提示：
+[参考](https://pypi.python.org/pypi/kdcproxy/0.3.1)   
+为什么需要kerberos代理？为了让防火墙之外的kerberos客户端通过外网443端口(https端口)访问KDC，并执行一些客户端命令。  
+常用的kerberos代理是KDCProxy(httpd+python实现)，而流行的安装套件freeipa内置了KDCProxy。  
+安装freeIPA时(执行ipa-server-install)，通过提示可以看到：
 ```
 Configuring the web interface (httpd). Estimated time: 1 minute
   [16/21]: create KDC proxy user
   [17/21]: create KDC proxy config
   [18/21]: enable KDC proxy
 ```
-通过KdcProxy可以让kinit客户端以https协议通过代理连接到KDC。  
+通过KdcProxy可以让kinit客户端以https协议通过代理连接到KDC。下面演示如何让c7002节点上的kerberos客户端通过代理访问KDC。  
 首先需要把freeipa的证书复制到客户端所在的机器上：
 ```
 $ cd /etc/ipa
@@ -155,16 +171,4 @@ Password for admin@AMBARI.APACHE.ORG:
 （略）
 ```
 从上面的调试信息可以看出kinit连接是通过https的443端口连接到KDC的。  
-## windows下kerberos认证(非AD)
-[原文](https://community.hortonworks.com/articles/28537/user-authentication-from-windows-workstation-to-hd.html)  
-在windows10专业版下进行的测试，win10已经加入了AD域。  
-- windows域是HOME.LANGCHAO.COM
-- HDP集群域是AMBARI.APACHE.ORG  
 
-测试步骤：  
-
-1. 安装MIT Kerberos客户端(windows版)  
-2. 安装windows版火狐浏览器  
-3. 在火狐中启用Kerberos支持  
-4. 通过Kerberos客户端获得kerberos票据  
-5. 通过火狐打开HDP界面  
