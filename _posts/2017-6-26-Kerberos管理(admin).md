@@ -7,7 +7,7 @@ tag: security kerberos
 ---
 ## Kerberos服务器安装/管理
 参考: [HDP Security](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.0/bk_security/content/_kerberos_overview.html)、[一个kerberos入门](https://steveloughran.gitbooks.io/kerberos_and_hadoop/content/)。
-安装环境是ubuntu14.4，参考[Ambari在本地VM部署hadoop集群](/ambari_vm/)。  
+安装环境是ubuntu14.4，参考[Ambari在本地VM部署hadoop集群](https://imaidata.github.io/blog/ambari_vm/)。  
 
 ### 1.安装KDC Server
 在节点u1404上安装Install the KDC Server：
