@@ -3,7 +3,8 @@ layout: post
 title:  Kerberos使用(client)
 date:   2017-06-26
 categories: security
-tag: security kerberos
+tag: security,kerberos
+permalink: /kerberos_client/
 ---
 
 ### kerberos客户端安装
