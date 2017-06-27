@@ -23,7 +23,7 @@ $ yum install krb5-workstation
 
 windows下kerberos客户端的安装和使用比较特殊，会在下文中提及。  
 
-#### kerberos客户端的使用
+### kerberos客户端的使用
 kerberos客户端的常用命令是kinit、klist、kdestroy、kpasswd。
 kinit用户登录。登录过程就是客户端从KDC获取票据TGT的过程。登录成功后，票据被缓存在本地。实际上就是建立了安全会话。  
 klist用户查看当前票据缓存中内容，可以理解为查看当前会话状态。  
@@ -131,8 +131,11 @@ curl发现了响应头的`GSS-Negotiate`，并且还有`--negotiate`参数，它
 - windows  
 linux桌面下的测试比较简单；MAC OS没找到办法；windows下的测试下面有专门的一章。  
 
-ubuntu桌面系统自带的浏览器就是火狐。首先要配置“可信任域”。在火狐地址栏输入：about:config并回车。然后在search输入框中输入"negotiate"，双击配置项network.negotiate-auth.trusted-uris，输入```.ambari.apache.org```(注意别忽略最前面的点)。  
-## windows下kerberos认证(非AD)
+ubuntu桌面系统自带的浏览器就是火狐。首先要配置“可信任域”。在火狐地址栏输入：about:config并回车。然后在search输入框中输入"negotiate"，双击配置项network.negotiate-auth.trusted-uris，输入```.ambari.apache.org```(注意别忽略最前面的点)。  
+ubuntu桌面系统下组合键`ctrl+alt+f2`可以切换到命令行方式(f1到f6都行)，组合键`ctrl+alt+f7`返回图形界面。在命令行方式下用kinit获取票据，然后在地址栏输入http://u1401.ambari.apache.org:50070/webhdfs/v1/tmp/webb?op=LISTSTATUS并回车。  
+如果一切正常，浏览器中会显示一个json串。浏览器进行kerberos协商认证的原理与curl是一样的。如果用kdestroy命令登出，再用浏览器访问同一个url，会报错。  
+
+### windows下kerberos认证(非AD)
 [原文](https://community.hortonworks.com/articles/28537/user-authentication-from-windows-workstation-to-hd.html)  
 在windows10专业版下进行的测试，win10已经加入了AD域。  
 - windows域是HOME.LANGCHAO.COM
