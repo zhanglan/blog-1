@@ -122,19 +122,21 @@ http://www.meteorite.bi/products/saiku/download
 `cd /apps/saiku-server/  
 ./start-saiku.sh`  
   
-## 使用说明：  
+## 使用说明
+  
 	开发机登录地址如下：
 	http://192.168.10.114:8080/  
 	用户名：admin
 	密码：admin  
   
-### 1、新建查询，一共有18步操作步骤，现示例关键的几步：  
+### 1、新建查询
+	一共有18步操作步骤，现示例关键的几步：  
   
 ####  选择Admin Console  
   
 ![]({{site.url}}/styles/images/olap/saiku/saiku1.png)
   
-####  上传schma  
+####  上传schema  
   
 ![]({{site.url}}/styles/images/olap/saiku/saiku2.png)  
   
@@ -157,6 +159,7 @@ http://www.meteorite.bi/products/saiku/download
 ![]({{site.url}}/styles/images/olap/saiku/saiku3.png)  
   
 #### 在mysql中建表，然后添加数据源  
+
 ```
 CREATE TABLE t_data  
 (  
