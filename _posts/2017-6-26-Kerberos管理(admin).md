@@ -6,7 +6,7 @@ categories: security
 tag: security kerberos
 ---
 ## Kerberos服务器安装/管理
-[参考](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.0/bk_security/content/_kerberos_overview.html)  
+[HDP Security](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.0/bk_security/content/_kerberos_overview.html)  
 [一个kerberos入门](https://steveloughran.gitbooks.io/kerberos_and_hadoop/content/)  
 安装环境是ubuntu14.4，安装环境参考[Ambari在本地VM部署集群](https://imaidata.github.io/blog/2017/06/26/Ambari%E5%9C%A8%E6%9C%AC%E5%9C%B0VM%E9%83%A8%E7%BD%B2%E9%9B%86%E7%BE%A4/)。  
 
