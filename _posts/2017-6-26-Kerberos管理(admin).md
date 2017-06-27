@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Kerberos管理
+title:  Kerberos管理(admin)
 date:   2017-06-26
 categories: security
 tag: security,kerberos
