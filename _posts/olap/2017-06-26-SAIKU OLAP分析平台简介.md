@@ -99,15 +99,16 @@ mvn clean clover2:setup test clover2:aggregate clover2:clover`
 以上maven构建方式，由于无法连接到国外的源，所以未能构建成功。  
 添加阿里云镜象：  
 修改maven根目录下的conf文件夹中的setting.xml文件，内容如下：  
- 
-`  <mirrors>  
+``` 
+  <mirrors>  
     <mirror>   
       <id>alimaven</id>   
       <name>aliyun maven</name>   
       <url>http://maven.aliyun.com/nexus/content/groups/public/</url>  
       <mirrorOf>central</mirrorOf>  
     </mirror>  
-   </mirrors>`  
+   </mirrors>
+```  
   
 ## 下载社区版  
 通过以下url下载安装jar包：  
@@ -137,8 +138,8 @@ admin
   
   
 内容先手动构建  
-  
-`<Schema name="test_schema">  
+```  
+<Schema name="test_schema">  
 	<cube name="test_cube">  
 		<Table name="t_data"/>  
 			<Dimension name="user" foreignKey="user_id">  
@@ -148,13 +149,15 @@ admin
 			</Dimension>  
 			<Measure column="count" aggregator="sum" datatype="Numeric" name="all_count" caption="all_count"/>  
 	</cube>  
-</Schema>`  
+</Schema>
+```  
 提示上传成功  
   
   
   
 在mysql中建表，然后添加数据源  
-`CREATE TABLE t_data  
+```
+CREATE TABLE t_data  
 (  
   user_id integer,  
   count numeric(4,2)  
@@ -164,20 +167,23 @@ CREATE TABLE t_user
   user_id serial NOT NULL,  
   user_name character varying(50),  
   pwd character varying(50)  
-);`   
+);
+```   
 
  
 --t_data的数据  
-|  user_id         |  count          |      
-|  :------------- | :-------------:|     
+
+|  user_id            |  count            |      
+|  :-------------     | :-------------:   |     
 |  1     	          |  33               |   
 |  2     	          |  32               |   
 |  3     	          |  34               |   
 |  4     	          |  38               |   
   
 --t_user的数据  
-|  user_id       |  user_name     |  pwd           |    
-|  -----------  | :-------------    | :----------- :|     
+
+|  user_id         |  user_name          |  pwd              |    
+|  -----------     | :-------------      | :-----------      |     
 |  1     	       |  user1              | 1                 |   
 |  2     	       |  user2              | 2                 |   
 |  3     	       |  user3              | 3                 |   
@@ -195,7 +201,16 @@ CREATE TABLE t_user
   
   
 Saiku去掉登录模块  
+
 1、修改applicationContext-saiku-webapp.xml  
-><security:intercept-url pattern="/rest/**" access="IS_AUTHENTICATED_ANONYMOUSLY" /><security:intercept-url pattern="/json/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />  
+```
+	<security:intercept-url pattern="/rest/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+	<security:intercept-url pattern="/json/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />  
+```
  2、在saiku-beans.xml中添加allowAnonymous属性  
-><bean id="sessionService" class="org.saiku.web.service.SessionService"> <property name="authenticationManager" ref="authenticationManager" /> <property name="allowAnonymous" value="true" /></bean  
+```
+	<bean id="sessionService" class="org.saiku.web.service.SessionService"> 
+		<property name="authenticationManager" ref="authenticationManager" />
+		<property name="allowAnonymous" value="true" />
+	</bean
+```  
