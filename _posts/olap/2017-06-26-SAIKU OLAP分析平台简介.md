@@ -47,8 +47,10 @@ Saiku成立于2008年，由Tom Barber和Paul Stoellberger研发。
   
 ## 安装jdk  
 1、将jdk8的安装文件下载至/usr目录下  
-`cd /usr  
-wget --no-check-certificate --no-cookies  http://10.10.10.67/eclipse/jdk8/jdk-8u131-linux-x64.tar.gz`  
+```
+cd /usr  
+wget --no-check-certificate --no-cookies  http://10.10.10.67/eclipse/jdk8/jdk-8u131-linux-x64.tar.gz
+```  
   
 2、解压缩jdk8安装文件；  
 `tar -zxvf  jdk-8u131-linux-x64.tar.gz`  
