@@ -1,9 +1,10 @@
 ---
 layout: post
-title:  Ambari在本地VM部署集群
+title:  Ambari在本地VM部署hadoop集群
 date:   2017-06-26
 categories: base
 tag: Ambari,Vagrant,install
+permalink: /ambari_vm/
 ---
 本文参考了apache官网的这个文章[Installing a cluster with Ambari (with local VMs)](https://cwiki.apache.org/confluence/display/AMBARI/Quick+Start+Guide)。文章写的应是苹果操作系统下(MAC OS)的操作，在windows下会略有不同。  
 ## windows下的安装
