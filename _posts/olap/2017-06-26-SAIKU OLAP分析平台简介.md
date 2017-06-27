@@ -132,11 +132,11 @@ http://www.meteorite.bi/products/saiku/download
   
 ####  选择Admin Console  
   
-![](../saiku1.png)
+![](saiku1.png)
   
 ####  上传schma  
   
-![](olap/saiku2.png)  
+![](saiku2.png)  
   
 以下为Schema内容  
 ```  
@@ -154,7 +154,7 @@ http://www.meteorite.bi/products/saiku/download
 ```  
 提示上传成功  
   
-![](blog/_posts/olap/saiku3.png)  
+![](saiku3.png)  
   
 #### 在mysql中建表，然后添加数据源  
 ```
@@ -193,7 +193,7 @@ CREATE TABLE t_user
   
 数据源配置，根据自己的连接情况进行相应的配置：  
   
-![](_posts/olap/saiku4.png)    
+![](saiku4.png)    
   
 重新启动服务，然后选择多维数据查看，通过简单的配置，就可以得到此立方体下的各种维度的query和图表。  
   
