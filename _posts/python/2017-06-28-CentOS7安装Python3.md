@@ -68,5 +68,6 @@ yumdownloader
 文件头由 #!/usr/bin/python 改为 #!/usr/bin/python2
 
 # 修改urlgrabber配置文件
-` vi /usr/libexec/urlgrabber-ext-down  `
+` vi /usr/libexec/urlgrabber-ext-down  `  
+
 文件头由 #!/usr/bin/python 改为 #!/usr/bin/python2
