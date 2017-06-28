@@ -49,11 +49,18 @@ $ ls -l
             </service>
 ```
 提醒注意的是hbase master装在u1403节点，所以上面HBASEUI配置的是u1403。节点FQDN写死不好，更高明的写法应是使用内置变量，暂时不会。  
-保存后，重启knox服务。  
-通过下列URI访问代理后的三个服务UI：
+保存后，重启knox服务。  
+三个服务的代理后的界面URI分别是下面这些：
 ```
 https://u1401.ambari.apache.org:8443/gateway/default/hbase/webui
 https://u1401.ambari.apache.org:8443/gateway/default/hdfs
 https://u1401.ambari.apache.org:8443/gateway/default/ambari
 ```
-实测中三个URI都可以正常代理HBASE/HDFS/AMBARI的界面，但使用代理后的ambari界面似乎不能正确保存修改的配置。  
+可以通过CURL工具测试一下HDFS:
+```
+$ curl -i -k -u john:johnldap -X GET 'https://u1401.ambari.apache.org:8443/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS'
+```
+只所以加上-u参数，是因为我测试的knox配置了ShiroProvider认证。测试的结果是以json格式返回了HDFS`/tmp`目录下的对象清单。  
+
+还可以将上述三个URI输入到浏览器中进行测试。通过浏览器实测，三个URI都可以正常代理HBASE/HDFS/AMBARI的界面。但使用代理后的ambari界面似乎不能正确保存修改的配置。  
+
