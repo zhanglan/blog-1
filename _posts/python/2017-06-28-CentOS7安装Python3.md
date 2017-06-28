@@ -24,10 +24,11 @@ tag: Python
 ` cd  /tmp/Python-3.6.0/
 
 把Python3.6安装到 /usr/local 目录
-
-`  ./configure --prefix=/usr/local
-`  make
-`  make altinstall
+```
+  ./configure --prefix=/usr/local
+  make
+  make altinstall
+```
 
 python3.6程序的执行文件：/usr/local/bin/python3.6
 python3.6应用程序目录：/usr/local/lib/python3.6
@@ -35,14 +36,19 @@ pip3的执行文件：/usr/local/bin/pip3.6
 pyenv3的执行文件：/usr/local/bin/pyenv-3.6
 
 # 更改/usr/bin/python链接
-` cd /usr/bin
-` mv  python python.backup
-` ln -s /usr/local/bin/python3.6 /usr/bin/python
-` ln -s /usr/local/bin/python3.6 /usr/bin/python3
+```
+cd /usr/bin
+ mv  python python.backup
+ ln -s /usr/local/bin/python3.6 /usr/bin/python
+ ln -s /usr/local/bin/python3.6 /usr/bin/python3
+ ```
 
 # 更改yum脚本的python依赖
-` cd /usr/bin
-` ls yum*
+```
+cd /usr/bin
+ ls yum*
+ ```
+ 会显示以下文件
 ```
 yum
 yum-config-manager
