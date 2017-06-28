@@ -59,13 +59,14 @@ yum-debug-dump
 yumdownloader
 ```
 
-更改以上文件头为
-` #!/usr/bin/python 改为 #!/usr/bin/python2
+编辑上述文件，更改以上文件头：
+ 由#!/usr/bin/python 改为 #!/usr/bin/python2
 
 # 修改gnome-tweak-tool配置文件
-` vi /usr/bin/gnome-tweak-tool
-` #!/usr/bin/python 改为 #!/usr/bin/python2
+` vi /usr/bin/gnome-tweak-tool  `
+
+文件头由 #!/usr/bin/python 改为 #!/usr/bin/python2
 
 # 修改urlgrabber配置文件
-` vi /usr/libexec/urlgrabber-ext-down
-` #!/usr/bin/python 改为 #!/usr/bin/python2
+` vi /usr/libexec/urlgrabber-ext-down  `
+文件头由 #!/usr/bin/python 改为 #!/usr/bin/python2
