@@ -37,18 +37,18 @@ $ ls -l
 ```
         <service>
                 <role>HBASEUI</role>
-                <url>http://u1403.ambari.apache.org:16010</url>
+                <url>http://{{hbase_master_host}}:16010</url>
             </service>
          <service>
                 <role>HDFSUI</role>
-                <url>http://u1401.ambari.apache.org:50070</url>
+                <url>http://{{namenode_host}}:50070</url>
           </service>
          <service>
                 <role>AMBARIUI</role>
                 <url>http://u1401.ambari.apache.org:8080</url>
             </service>
 ```
-提醒注意的是hbase master装在u1403节点，所以上面HBASEUI配置的是u1403。节点FQDN写死不好，更高明的写法应是使用内置变量，暂时不会。  
+按说端口号写死不好，更高明的写法应是使用内置变量，暂时不会。  
 保存后，重启knox服务。  
 三个服务的代理后的界面URI分别是下面这些：
 ```
