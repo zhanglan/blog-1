@@ -79,6 +79,33 @@ $ kinit -k -t webb.keytab webb
 ```
 webb.keytab需要位于当前目录，或者用绝对路径。由于一个keytab文件中可以包含多个主体，所以后面要跟上主体id(webb)。  
 
+显示keytab文件中主体和加密类型：
+```
+$ klist -e -k webb.keytab 
+Keytab name: FILE:webb.keytab
+KVNO Principal
+---- --------------------------------------------------------------------------
+   2 webb@AMBARI.APACHE.ORG (aes256-cts-hmac-sha1-96)
+   2 webb@AMBARI.APACHE.ORG (arcfour-hmac)
+   2 webb@AMBARI.APACHE.ORG (des3-cbc-sha1)
+   2 webb@AMBARI.APACHE.ORG (des-cbc-crc)
+   3 webb@AMBARI.APACHE.ORG (aes256-cts-hmac-sha1-96)
+   3 webb@AMBARI.APACHE.ORG (arcfour-hmac)
+   3 webb@AMBARI.APACHE.ORG (des3-cbc-sha1)
+   3 webb@AMBARI.APACHE.ORG (des-cbc-crc)
+```
+以上是安装了启用了kerberos的AMBARI下的keytab。而仅安装kerberos后测试的结果是：
+```
+$  klist -e -k webb.keytab
+Keytab name: FILE:webb.keytab
+KVNO Principal
+---- --------------------------------------------------------------------------
+   2 webb@AMBARI.APACHE.ORG (aes256-cts-hmac-sha1-96)
+   2 webb@AMBARI.APACHE.ORG (arcfour-hmac)
+   2 webb@AMBARI.APACHE.ORG (des3-cbc-sha1)
+   2 webb@AMBARI.APACHE.ORG (des-cbc-crc)
+```
+
 ### 通过命令行访问启用了kerberos的集群
 通过命令行访问启用了kerberos的集群（kerberized cluster），必须首先用kinit登录。
 ```
