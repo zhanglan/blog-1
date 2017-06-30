@@ -5,11 +5,15 @@ date:   2017-06-29
 categories: base
 tag: base,install
 ---
-##saltstack简介
+saltstack简介
+------------------------------------
+
 SaltStack是一个服务器基础架构集中化管理平台，具备配置管理、远程执行、监控等功能，一般可以理解为简化版的puppet和加强版的func。SaltStack基于Python语言实现，结合轻量级消息队列（ZeroMQ）与Python第三方模块（Pyzmq、PyCrypto、Pyjinjia2、python-msgpack和PyYAML等）构建。
 通过部署SaltStack环境，我们可以在成千上万台服务器上做到批量执行命令，根据不同业务特性进行配置集中化管理、分发文件、采集服务器数据、操作系统基础及软件包管理等，SaltStack是运维人员提高工作效率、规范业务配置与操作的利器。
 
-##安装
+安装
+------------------------------------
+
 首先安装基本的fodora epel yum 源
 yum install -y http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-9.noarch.rpm
 
@@ -35,7 +39,9 @@ yum install salt-master
 在minion上安装salt-minion
 yum install salt-minion
 
-##配置
+配置
+------------------------------------
+
 上面安装成功之后开始配置部分，在master上需要修改 /etc/salt/master 这个配置文件，如下：
 interface: 10.10.250.221    #这里填写master的地址
 auto_accept: True
@@ -63,7 +69,9 @@ salt-key -L
 
 salt-key -A
 
-##常用的命令
+常用的命令
+------------------------------------
+
 测试minion是否连通
 salt '*' test.ping	# * 代表所有minion客户端，也可以指定特定的某一个minion，salt 'cdd7302' test.ping
 
@@ -118,7 +126,9 @@ c7302:
     zookeeper
 
 
-##用salt打通主机之间ssh互信
+用salt打通主机之间ssh互信
+------------------------------------
+
 在master上执行下面命令，生成ssh密钥
 ssh-keygen -t rsa
 
@@ -139,7 +149,8 @@ ssh 10.10.250.222
 Last login: Fri Jun 30 08:38:22 2017 from 10.10.11.138
 [root@c7302 ~]#
 
-##作为运维工具所有服务器上安装通用工具，例如安装wget
+作为运维工具所有服务器上安装通用工具，例如安装wget
+------------------------------------
 
 salt '*' cmd.run 'yum install -y wget'
 
