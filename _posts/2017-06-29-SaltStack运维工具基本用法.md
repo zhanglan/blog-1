@@ -19,11 +19,11 @@ SaltStack是一个服务器基础架构集中化管理平台，具备配置管�
 首先安装基本的fodora epel yum 源
 ```
 yum install -y http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-9.noarch.rpm
-
+```
 通过下面命令检查是否成功
 ```
 yum repolist
-
+```
 
 接着开始安装 salt master 和 salt minion，注意 master 是服务器端，minion是客户端，我们的服务器列表如下：
 ```
@@ -35,17 +35,17 @@ yum repolist
 10.10.250.226	c7306
 10.10.250.227	c7307
 10.10.250.228	c7308
-
+```
 在c7301上安装master和minion，其他c7302~c7308都只安装minion。
 安装命令如下：
 在master上安装salt-master
 ```
 yum install salt-master
-
+```
 在minion上安装salt-minion
 ```
 yum install salt-minion
-
+```
 配置
 ------------------------------------
 
@@ -53,35 +53,35 @@ yum install salt-minion
 ```
 interface: 10.10.250.221    #这里填写master的地址
 auto_accept: True
-
+```
 需要传输文件还需做下面配置：
 ```
 file_roots:
   base:
     - /srv/salt
-
+```
 
 在minion端，修改 /etc/salt/minion 这个配置文件，如下：
 ```
 master: 10.10.250.221				#这里填写master的地址
 id: open02									#填写minion的主机名
-
+```
 修改上面的配置文件之后，就可以分别启动 master 和 minion服务了
 ```
 service salt-master start
 service salt-minion start
-
+```
 创建主机开机启动服务
 ```
 systemctl enable salt-master.service
 systemctl enable salt-minion.service
-
+```
 服务启动之后，在master执行下面命令就能获取到minion客户端了
 ```
 salt-key -L
 
 salt-key -A
-
+```
 常用的命令
 ------------------------------------
 
@@ -106,7 +106,7 @@ c7304:
     True
 c7302:
     True
-
+```
 
 在客户端上执行命令
 ```
@@ -140,7 +140,7 @@ c7302:
     tez
     zeppelin
     zookeeper
-
+```
 
 用salt打通主机之间ssh互信
 ------------------------------------
@@ -148,32 +148,32 @@ c7302:
 在master上执行下面命令，生成ssh密钥
 ```
 ssh-keygen -t rsa
-
+```
 另外创建传输目录
 ```
 mkdir -pv /srv/salt/ssh
-
+```
 将密钥文件拷贝到传输目录下
 ```
 cp /root/.ssh/id_rsa.pub /srv/salt/ssh/id_rsa.pub
-
+```
 添加某一个主机的信任，例如添加c7302，执行下面命令
 ```
 salt 'c7301' ssh.set_known_host root 10.10.250.222
 
 salt 'c7302' ssh.set_auth_key_from_file root salt://ssh/id_rsa.pub
-
+```
 看看是否通过
 ```
 ssh 10.10.250.222
 [root@c7301 ~]# ssh 10.10.250.222
 Last login: Fri Jun 30 08:38:22 2017 from 10.10.11.138
 [root@c7302 ~]#
-
+```
 作为运维工具所有服务器上安装通用工具，例如安装wget
 ------------------------------------
 ```
 salt '*' cmd.run 'yum install -y wget'
 
-
+```
 
