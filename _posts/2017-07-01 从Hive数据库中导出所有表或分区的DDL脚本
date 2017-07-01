@@ -1,0 +1,56 @@
+---
+layout: post
+title:  从Hive数据库中导出所有表或分区的DDL脚本
+date:   2017-07-01
+categories: base
+tag: base hive Extract DDL partition
+---
+简介
+------------------------------------
+从Hive数据库中导出所有表或分区的DDL脚本。
+
+目的
+------------------------------------
+本文提供了一个从指定的Hive数据库导出所有表或分区的DDL脚本。
+这个脚本常用于将Hive表从一个群集迁移到另一个群集时，通过该脚本进行使用迁移或创建Hive表。
+您可以使用命令行的方式，通过修改和循环这个脚本处理所有的数据库。
+
+#本文提供了用于提取给定配置单元数据库中所有表和分区的DDL的脚本。
+#您可以通过命令行传递所有数据库来修改和循环此脚本。
+本文提供了一个从指定的Hive数据库导出所有表或分区的DDL脚本。
+
+```
+#!/bin/bash
+hiveDBName=testdbname;
+ 
+showcreate="show create table "
+showpartitions="show partitions "
+terminate=";"
+ 
+tables=`hive -e "use $hiveDBName;show tables;"`
+tab_list=`echo "${tables}"`
+ 
+rm -f ${hiveDBName}_all_table_partition_DDL.txt
+ 
+for list in $tab_list
+do
+   showcreatetable=${showcreatetable}${showcreate}${list}${terminate}
+   listpartitions=`hive -e "use $hiveDBName; ${showpartitions}${list}"`
+ 
+   for tablepart in $listpartitions
+   do
+      partname=`echo ${tablepart/=/=\"}`
+      echo $partname
+      echo "ALTER TABLE $list ADD PARTITION ($partname\");" >> ${hiveDBName}_all_table_partition_DDL.txt
+   done
+ 
+done
+ 
+echo " ====== Create Tables ======= : " $showcreatetable
+ 
+## Remove the file
+rm -f ${hiveDBName}_extract_all_tables.txt
+ 
+hive -e "use $hiveDBName; ${showcreatetable}" >> ${hiveDBName}_extract_all_tables.txt
+```
+How-To/TutorialHive
