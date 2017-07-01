@@ -1,10 +1,9 @@
-
 ---
 layout: post
 title:  从Hive数据库中导出所有表或分区的DDL脚本
 date:   2017-07-01
 categories: base
-tag: base hive Extract DDL partition
+tag: base,install,base,hive,Extract,DDL,partition
 ---
 
 简介
