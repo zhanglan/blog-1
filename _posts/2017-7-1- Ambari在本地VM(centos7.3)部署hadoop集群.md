@@ -4,10 +4,10 @@ title:  Ambari在本地VM(centos7.3)部署hadoop集群
 date:   2017-06-26
 categories: base
 tag: Ambari,Vagrant,install
-permalink: /ambari_vm/
+permalink: /ambari_centos/
 ---
-本文描述了如何在windows下的虚拟机(centos7.3)中使用Apache Ambari部署HDP(hadoop)集群
-本文参考了apache官网的这个文章[Installing a cluster with Ambari (with local VMs)](https://cwiki.apache.org/confluence/display/AMBARI/Quick+Start+Guide)。文章写的应是苹果操作系统下(MAC OS)的操作，在windows下会略有不同。  
+本文描述了如何在windows下的虚拟机(centos7.3)中使用Apache Ambari部署HDP(hadoop)集群。在ubuntu14下安装HDP参考[这个](https://imaidata.github.io/blog/ambari_centos/)。  
+本文参考了apache官网的这个文章[Installing a cluster with Ambari (with local VMs)](https://cwiki.apache.org/confluence/display/AMBARI/Quick+Start+Guide)。文章写的应是苹果操作系统下(MAC OS)的操作，在windows下会略有不同。  
 ### 准备
 windows下调试linux需要安装终端软件，推荐[Git Bash](https://git-scm.com/)。还需要安装虚拟机软件[VirtualBox](https://www.virtualbox.org/wiki/Downloads)和虚拟化管理软件[Vagrant](http://downloads.vagrantup.com/)。其中VirtualBox还是需要安装扩展包(官网同一下载页面上有链接)。   
 
