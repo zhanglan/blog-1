@@ -3,7 +3,7 @@ layout: post
 title:  windows下用kerberos客户端和火狐登录HDP域
 date:   2017-06-27
 categories: security
-tag: security,kerberos,spnego
+tags: security kerberos spnego
 ---
 
 原文：[User authentication from Windows Workstation to HDP Realm Using MIT Kerberos Client (with Firefox)](https://community.hortonworks.com/articles/28537/user-authentication-from-windows-workstation-to-hd.html)  
