@@ -173,6 +173,50 @@ Password for admin@AMBARI.APACHE.ORG:
 从上面的调试信息可以看出kinit连接是通过https的443端口连接到KDC的。  
 
 ## centos7下的kerberos server安装
+安装KDC：
 ```
 $ yum install krb5-server
 ```
+修改配置文件`/etc/krb5.conf`：
+```
+[libdefaults]
+default_realm = AMBARI.APACHE.ORG
+[realms]
+ AMBARI.APACHE.ORG = {
+  kdc = c7301.ambari.apache.org
+  admin_server = c7301.ambari.apache.org
+ }
+
+[domain_realm]
+ .ambari.apache.org = AMBARI.APACHE.ORG
+ ambari.apache.org = AMBARI.APACHE.ORG
+```
+编辑配置文件`/var/kerberos/krb5kdc/kdc.conf`，将其中的`EXAMPLE.COM`替换为`AMBARI.APACHE.ORG`。  
+使用工具kdb5_util创建数据库：
+```
+$ kdb5_util create -s
+Loading random data
+Initializing database '/var/kerberos/krb5kdc/principal' for realm 'AMBARI.APACHE.ORG',
+master key name 'K/M@AMBARI.APACHE.ORG'
+You will be prompted for the database Master Password.
+It is important that you NOT FORGET this password.
+Enter KDC database master key: 1                                    (KDC数据库的主密码设置为1)
+Re-enter KDC database master key to verify: 1
+```
+编辑配置文件`/var/kerberos/krb5kdc/kadm5.acl`，将`*/admin@EXAMPLE.COM *`修改`*/admin@AMBAIR.APACHE.ORG *`。  
+使用工具kadmin.local创建管理员主体(密码是1)：
+```
+$ kadmin.local
+Authenticating as principal root/admin@AMBARI.APACHE.ORG with password.
+kadmin.local:  addprinc root/admin
+WARNING: no policy specified for root/admin@AMBARI.APACHE.ORG; defaulting to no policy
+Enter password for principal "root/admin@AMBARI.APACHE.ORG": 1
+Re-enter password for principal "root/admin@AMBARI.APACHE.ORG": 1
+Principal "root/admin@AMBARI.APACHE.ORG" created.
+```
+启动kerberos服务：
+```
+ $ service krb5kdc start
+ $ service kadmin start
+```
+具体的KDC使用，centos与ubuntu下基本一样。 
