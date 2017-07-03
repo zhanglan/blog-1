@@ -110,36 +110,42 @@ $ cat ~/.ssh/id_rsa          （~代表了```/root```，即root用户的HOME目�
 
 （安装ambari-agent那一步总出错，手工下载[ambari-agent-2.5.1.0-159.x86_64.rpm]( http://repo.imaicloud.com/ambari/centos7/2.x/updates/2.5.1.0/ambari/ambari-agent-2.5.1.0-159.x86_64.rpm)到本地，然后执行`yum install ambari-agent-2.5.1.0-159.x86_64.rpm`）
 
-## 测试hadoop集群
-参考[HDFS的官方文档]进行HDFS的测试：
+## centos7.3下部署HDP碰到的问题
+
 ```
-$ curl http://192.168.14.102:50070/webhdfs/v1/?op=LISTSTATUS
-{"FileStatuses":{"FileStatus":[
-{"accessTime":0,"blockSize":0,"childrenNum":1,"fileId":16386,"group":"hdfs","length":0,"modificationTime":1490698439789,"owner":"hdfs","pathSuffix":"tmp","permission":"777","replication":0,"storagePolicy":0,"type":"DIRECTORY"},
-{"accessTime":0,"blockSize":0,"childrenNum":1,"fileId":16387,"group":"hdfs","length":0,"modificationTime":1490698426134,"owner":"hdfs","pathSuffix":"user","permission":"755","replication":0,"storagePolicy":0,"type":"DIRECTORY"}
-]}}
+$ yum --enablerepo=HDP-2.6 clean metadata
+$ yum --enablerepo=HDP-2.6.1.0 clean metadata
+$ yum --enablerepo=ambari-2.5.3.0 clean metadata
+$ yum install hadoop_2_6_1_0_129
 ```
-上述响应中tmp和user是HDFS中的两个目录。查询tmp目录下的内容：
+问题：Delta RPMs disabled because /usr/bin/applydeltarpm not installed.
+解决办法：
 ```
-curl http://192.168.14.102:50070/webhdfs/v1/tmp?op=LISTSTATUS
+$ yum provides '*/applydeltarpm'
+$ yum install deltarpm
 ```
-在u1402或u1403主机上使用命令行测试HDFS：
+问题：Package does not match intended download
 ```
-$ hdfs dfs -ls /   (反斜杠表示显示根目录下的文件清单)
-Found 2 items
-drwxrwxrwx   - hdfs   hdfs            0 2017-03-28 15:57 /tmp
-drwxr-xr-x   - hdfs   hdfs            0 2017-03-28 18:05 /user
+$ yum clean all
+$ yum install xxxx
 ```
-还可以用浏览器访问这个地址来显示HDFS（估计这个UI是HDP实现的）的文件清单：
+问题：Delta RPMs disabled because /usr/bin/applydeltarpm not installed.
+解决办法：
 ```
-http://192.168.14.102:50070/explorer.html#/
+$ yum provides '*/applydeltarpm'
+$ yum install deltarpm
+```
+问题：Package does not match intended download
+```
+$ yum clean all
+$ yum install xxxx
 ```
 ## 虚拟机重启
 如果hadoop集群出现一些问题，将所有虚拟机重启有时可以解决问题。  
 在git bash窗口下：  
 ```
 $ vagrant halt                        (当前目录下的所有虚拟机关机)
-$ vagrant up u1401 u1402 u1403        (启动这三个节点的虚拟机)
+$ vagrant up c7301 c7302 c7303        (启动这三个节点的虚拟机)
 ```
 等所有虚拟机重启后，进入Ambari界面，发现所有服务都停止了。点击左侧下边的`Actions`按钮，选择`Start All`，等一会儿，所有的服务就都启动了。  
 
@@ -147,109 +153,37 @@ $ vagrant up u1401 u1402 u1403        (启动这三个节点的虚拟机)
 利用虚拟机快照可以备份整个hadoop集群。  
 在git bash窗口中执行：
 ```
-$ vagrant snapshot save u1401 u1401snap      (保存u1401快照)
-$ vagrant snapshot save u1402 u1402snap      (保存u1402快照)
-$ vagrant snapshot save u1403 u1403snap      (保存u1403快照)
+$ vagrant snapshot save c7301 c7301snap      (保存c7301快照)
+$ vagrant snapshot save c7302 c7302snap      (保存c7302快照)
+$ vagrant snapshot save c7303 c7303snap      (保存c7303快照)
 ```
 如果某种原因集群损坏了，想恢复之前的备份，则执行：
 ```
-$ vagrant snapshot restore u1401 u1401snap         (恢复u1401)
-$ vagrant snapshot restore u1402 u1402snap         (恢复u1402)
-$ vagrant snapshot restore u1403 u1403snap         (恢复u1403)
+$ vagrant snapshot restore c7301 c7301snap         (恢复c7301)
+$ vagrant snapshot restore c7302 c7302snap         (恢复c7302)
+$ vagrant snapshot restore c7303 c7303snap         (恢复c7303)
 ```
-u1401是虚拟机id，u1401snap是快照文件名。  
+c7301是虚拟机id，c7301snap是快照文件名。  
 
 ## 新增主机
-在windows下的git bash中启动一个新主机u1404：
+在windows下的git bash中启动一个新主机c7304：
 ```
-$ vagrant up u1404
-$ vagrant ssh u1404
+$ vagrant up c7304
+$ vagrant ssh c7304
 $ sudo su - root
 ```
-在u1404中进行前文说明的免密码SSH的一系列操作。在u1401中执行：
+在c7304中进行前文说明的免密码SSH的一系列操作。在c7301中执行：
 ```
-$ ssh-copy-id u1404
+$ ssh-copy-id c7304
 ```
 通过浏览器在ambari server的顶部菜单中选择Hosts，然后在“Actions”下拉按钮中选择“+Add New Hosts”。其他的与前文介绍的安装向导类似。只是在第4步的主机选项中只输入新增的主机名：
 ```
-u1404.ambari.apache.org
+c7304.ambari.apache.org
 ```
 其他的一路默认值。
 
 ## 添加服务实例
 添加新的zookeeper服务实例到u1404上。通过浏览器在ambari server管理界面上，点击顶部菜单“Services”，通过“Service Actions”下拉按钮点击“+Add Zookeeper Server”。
-
-### heartbeat失去
-[参考](http://www-01.ibm.com/support/docview.wss?uid=swg21984577)  
-u1402出现heartbeat alerts。在u1402上查看日志：
-```
-$ cat /var/log/ambari-agent/ambari-agent.log | grep ERROR
-ERROR 2017-03-29 06:13:28,491 Controller.py:415 - Unable to reconnect to https://u1401.ambari.apache.org:8441/agent/v1/heartbeat/u1402.ambari.apache.org (attempts=725, details=local variable 'data' referenced before assignment)
-```
-我参考的连接修改了u1401(ambari-server)和u1402(ambari-agent)的本地语言设置为：
-```
-$ cat /etc/default/locale
-LANG="en_US.UTF-8"
-LANGUAGE="en_US:UTF-8"
-```
-修改/usr/lib/python2.6/site-packages/ambari_simplejson/encoder.py， 修改为：
-```
- s = s.decode('utf-8', errors='ignore')
-```
-同时修改了u1401和u1402，然后重启了ambari-server和ambari-agent，问题解决。
-
-## 其他
-如果在调试过程中linux出现外网不通了，可以查看一下/etc/resolv.conf这个文件的内容，一般应为：
-```
-nameserver 10.0.2.3
-```
-如果没有这一行的定义（有时显示8.8.8.8），那是因为ambari官方提供的vagrant的脚本，会替换操作系统的resolv.conf，而替换后的结果在国内不能用。
-
-sed命令可以用于文件中字符串替换，命令格式借鉴了vi中的替换：
-```
-$ sed -i "s/{被替换的内容}/{替换为}/" /etc/ssh/sshd_config
-```
-vagrant plugin install vagrant-vbguest
-http://stackoverflow.com/questions/30175290/laravel-homestead-vagrant-vboxsf-not-available-issue
-[这个文档](https://github.com/wbwangk/wbwangk.github.io/wiki/Ambari%E6%B5%8B%E8%AF%95)是在调试ambari过程中我写的一个备忘。
-
-## 使用pdsh批量安装VM
-安装的主力是一个开源工具pdsh([parallel distributed shell](http://sourceforge.net/projects/pdsh))。pdsh能远程地在主机上执行命令行或文件中命令。pdsh发行版中包含的pdcp命令能分发复制文件。  
-
-要使用pdsh，必须先实现免密码SSH多台VM。免密码SSH的实现可参考[SSH的入门](https://github.com/wbwangk/wbwangk.github.io/wiki/SSH%E5%85%A5%E9%97%A8)。   
-前提：u1401的root用户已经实现了免密码ssh到u1401、u1402、u1403。需要强调的是，u1401对于自己也要实现免密码ssh。  
-在u1401上安装pdsh：
-```
-$ apt install pdsh
-```
-为了同时在多台机器上执行命令，首先创建一个all_hosts的文本文件：
-```
-u1401
-u1402
-u1403
-```
-测试一下用pdsh加载all_hosts，然后在上述三台VM执行date命令：
-```
-$ pdsh -R ssh -w ^all_hosts date    (-R指定rcmd模块为ssh)
-u1401: Wed Mar 29 01:02:16 UTC 2017
-u1402: Wed Mar 29 01:03:35 UTC 2017
-u1403: Wed Mar 29 01:05:26 UTC 2017
-```
-利用pdsh将三个VM的源更改为163源：
-```
-$ pdsh -R ssh -w ^all_hosts sed -i "s/us.archive.ubuntu.com/mirrors.163.com/" /etc/apt/sources.list
-$ pdsh -R ssh -w ^all_hosts sed -i "s/security.ubuntu.com/mirrors.163.com/" /etc/apt/sources.list
-```
-利用pdsh在所有三个VM上添加ambari和hadoop的本地源。在u1401上执行：
-```
-$ pdsh -R ssh -w ^all_hosts wget -P /etc/apt/sources.list.d http://repo.imaicloud.com/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136/ambari.list 
-$ pdsh -R ssh -w ^all_hosts wget -P /etc/apt/sources.list.d http://repo.imaicloud.com/hdp/HDP/ubuntu14/HDP.list
-$ pdsh -R ssh -w ^all_hosts wget -P /etc/apt/sources.list.d http://repo.imaicloud.com/hdp/HDP-UTILS-1.1.0.21/repos/ubuntu14/HDP-UTILS.list
-$ pdsh -R ssh -w ^all_hosts apt-key adv --recv-keys --keyserver keyserver.ubuntu.com B9733A7A07513CAD 
-$ pdsh -R ssh -w ^all_hosts apt-get update -y
-```
-根据屏幕提示就可以看到三台VM上逐次被添加了本地源和逐次进行更新。  
-如果需要批量执行其他命令，可以参照执行。  
 
 # centos6.8下部署HDP
 现在repo.imaicloud.com下已经有了HDP的centos6本地源（原来只有ubuntu14的源）。HDP本地源部署参考[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/%E6%90%AD%E5%BB%BAHDP%E6%9C%AC%E5%9C%B0%E6%BA%90)。  
