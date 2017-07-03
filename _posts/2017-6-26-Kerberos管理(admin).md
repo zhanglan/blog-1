@@ -219,4 +219,9 @@ Principal "root/admin@AMBARI.APACHE.ORG" created.
  $ service krb5kdc start
  $ service kadmin start
 ```
+让kerberos服务自动启动：
+```
+$ systemctl enable krb5kdc.service
+$ systemctl enable kadmin.service
+```
 具体的KDC使用，centos与ubuntu下基本一样。 
