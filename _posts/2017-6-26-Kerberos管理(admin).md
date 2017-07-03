@@ -172,3 +172,7 @@ Password for admin@AMBARI.APACHE.ORG:
 ```
 从上面的调试信息可以看出kinit连接是通过https的443端口连接到KDC的。  
 
+## centos7下的kerberos server安装
+```
+$ yum install krb5-server
+```
