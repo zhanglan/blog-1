@@ -3,7 +3,7 @@ layout: post
 title:  Knox的HadoopAuth(SPNEGO和基于委派令牌的认证)
 date:   2017-06-27
 categories: knox
-tag: knox,spnego,hadoopauth
+tags: knox spnego hadoopauth
 ---
 本文参考了[Hadoop Auth (SPNEGO and delegation token based authentication) with Apache Knox](https://community.hortonworks.com/articles/85550/hadoop-auth-spnego-and-delegation-token-based-auth.html)。  
 本节介绍使用Apache Knox配置Hadoop Auth（SPNEGO和基于代理令牌的身份验证）。
