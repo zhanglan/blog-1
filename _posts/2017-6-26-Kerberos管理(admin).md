@@ -3,7 +3,7 @@ layout: post
 title:  Kerberos管理(admin)
 date:   2017-06-26
 categories: security
-tag: security,kerberos
+tags: security kerberos
 permalink: /kerberos_admin/
 ---
 ## Kerberos服务器安装/管理
