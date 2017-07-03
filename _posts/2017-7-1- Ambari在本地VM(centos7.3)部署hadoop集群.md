@@ -3,7 +3,7 @@ layout: post
 title:  Ambari在本地VM(centos7.3)部署hadoop集群
 date:   2017-06-26
 categories: base
-tags: Ambari,Vagrant,install
+tags: Ambari Vagrant install
 permalink: /ambari_centos/
 ---
 本文描述了如何在windows下的虚拟机(centos7.3)中使用Apache Ambari部署HDP(hadoop)集群。在ubuntu14下安装HDP参考[这个](https://imaidata.github.io/blog/ambari_centos/)。  
