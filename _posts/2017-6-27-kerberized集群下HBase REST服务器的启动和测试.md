@@ -3,7 +3,7 @@ layout: post
 title:  kerberized集群下HBase REST服务器的启动和测试
 date:   2017-06-27
 categories: hbase
-tag: hbase,rest,kerberized
+tags: hbase rest kerberized
 ---
 
 [原文](https://community.hortonworks.com/articles/91425/howto-start-and-test-hbase-rest-server-in-a-kerber.html)  
