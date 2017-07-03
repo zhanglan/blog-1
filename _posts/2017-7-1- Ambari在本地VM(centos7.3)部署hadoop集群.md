@@ -140,6 +140,9 @@ $ yum install deltarpm
 $ yum clean all
 $ yum install xxxx
 ```
+问题：按默认装完HDP，发现只有一个datanode。可能因datanode不足，导致namenode处于安全模式。
+在AmbariUI中，前往 Hosts -> Actions -> All Hosts -> DataNodes -> Add，添加新节点，凑齐3个datanode。如果在kerberized集群下要输入管理员凭据。  
+
 ## 虚拟机重启
 如果hadoop集群出现一些问题，将所有虚拟机重启有时可以解决问题。  
 在git bash窗口下：  
