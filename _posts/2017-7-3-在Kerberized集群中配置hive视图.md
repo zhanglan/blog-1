@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 在Kerberized集群中配置hive视图
-date:  2017-07-0
+date:  2017-07-03
 categories: security
 tags: ambari hive
 ---
