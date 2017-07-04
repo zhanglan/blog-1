@@ -5,7 +5,7 @@ date:  2017-07-0
 categories: security
 tags: ambari hive
 ---
-测试环境centos7.3。  
+测试环境centos7.3。[原文](https://community.hortonworks.com/articles/40658/configure-hive-view-for-kerberized-cluster.html)  
 ### 未启用kerberos的集群
 
 用admin用户登录Ambari，前往Ambari UI -> Views(格子图标) -> Hive View。每次进入视图前，ambari会启动服务检查。检查到HiveServer时报错：
@@ -30,4 +30,6 @@ $ hdfs dfsadmin -safemode leave
 ```
 ### 启用kerberos的集群下测试hive视图
 由于前文的操作已经为admin用户创建了HDFS的`/user/admin`目录，在启用kerberos后Hive视图和Hive视图2.0均检测通过，正常显示：  
-![](https://community.hortonworks.com/storage/attachments/5122-screen-shot-2016-06-19-at-94111-pm.png)
+![](https://community.hortonworks.com/storage/attachments/5122-screen-shot-2016-06-19-at-94111-pm.png)  
+
+原文中有有多个关于`hadoop.proxyuser`的配置，但Ambari已经自动配置好了，实测根本不需要改。当然按原文那样改也没啥，只是权限放的比较宽而已。  
